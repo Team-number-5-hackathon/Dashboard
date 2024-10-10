@@ -110,6 +110,66 @@ paths:
       tags:
         - dashboard
     parameters: []
+  /dashboard/employee_position_rating/:
+    get:
+      operationId: dashboard_employee_position_rating_list
+      description: Вьюсет для работы с чартом "Оценки сотрудников по должностям".
+      parameters:
+        - name: team
+          in: query
+          description: team
+          required: false
+          type: string
+        - name: grade
+          in: query
+          description: grade
+          required: false
+          type: string
+        - name: skill
+          in: query
+          description: skill
+          required: false
+          type: string
+        - name: position
+          in: query
+          description: position
+          required: false
+          type: string
+        - name: employee
+          in: query
+          description: employee
+          required: false
+          type: string
+        - name: competence
+          in: query
+          description: competence
+          required: false
+          type: string
+        - name: domain
+          in: query
+          description: domain
+          required: false
+          type: string
+        - name: start_date
+          in: query
+          description: start_date
+          required: false
+          type: string
+        - name: end_date
+          in: query
+          description: end_date
+          required: false
+          type: string
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EmployeePositionRating'
+      tags:
+        - dashboard
+    parameters: []
   /dashboard/employee_positions/:
     get:
       operationId: dashboard_employee_positions_list
@@ -170,10 +230,161 @@ paths:
       tags:
         - dashboard
     parameters: []
+  /dashboard/employees_count_with_skills/:
+    get:
+      operationId: dashboard_employees_count_with_skills_list
+      description: |-
+        Вьюсет для чарта "Количество сотрудников, владеющих навыком"
+         для ВСЕХ НАВЫКОВ.
+      parameters:
+        - name: team
+          in: query
+          description: team
+          required: false
+          type: string
+        - name: grade
+          in: query
+          description: grade
+          required: false
+          type: string
+        - name: skill
+          in: query
+          description: skill
+          required: false
+          type: string
+        - name: position
+          in: query
+          description: position
+          required: false
+          type: string
+        - name: employee
+          in: query
+          description: employee
+          required: false
+          type: string
+        - name: competence
+          in: query
+          description: competence
+          required: false
+          type: string
+        - name: domain
+          in: query
+          description: domain
+          required: false
+          type: string
+        - name: start_date
+          in: query
+          description: start_date
+          required: false
+          type: string
+        - name: end_date
+          in: query
+          description: end_date
+          required: false
+          type: string
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EmployeesCountWithSkills'
+      tags:
+        - dashboard
+    parameters: []
+  /dashboard/employees_with_skill/{skill_id}/employees/:
+    get:
+      operationId: dashboard_employees_with_skill_employees_list
+      description: |-
+        Вьюсет для чарта "Количество сотрудников, владеющих навыком"
+         для ВЫБРАННОГО НАВЫКА.
+      parameters:
+        - name: team
+          in: query
+          description: team
+          required: false
+          type: string
+        - name: grade
+          in: query
+          description: grade
+          required: false
+          type: string
+        - name: skill
+          in: query
+          description: skill
+          required: false
+          type: string
+        - name: position
+          in: query
+          description: position
+          required: false
+          type: string
+        - name: employee
+          in: query
+          description: employee
+          required: false
+          type: string
+        - name: competence
+          in: query
+          description: competence
+          required: false
+          type: string
+        - name: domain
+          in: query
+          description: domain
+          required: false
+          type: string
+        - name: start_date
+          in: query
+          description: start_date
+          required: false
+          type: string
+        - name: end_date
+          in: query
+          description: end_date
+          required: false
+          type: string
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EmployeesWithSkill'
+      tags:
+        - dashboard
+    parameters:
+      - name: skill_id
+        in: path
+        required: true
+        type: string
+  /dashboard/employees_with_skill/{skill_id}/employees/{id}/:
+    get:
+      operationId: dashboard_employees_with_skill_employees_read
+      description: |-
+        Вьюсет для чарта "Количество сотрудников, владеющих навыком"
+         для ВЫБРАННОГО НАВЫКА.
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/EmployeesWithSkill'
+      tags:
+        - dashboard
+    parameters:
+      - name: skill_id
+        in: path
+        required: true
+        type: string
+      - name: id
+        in: path
+        required: true
+        type: string
   /dashboard/skills_development/:
     get:
       operationId: dashboard_skills_development_list
-      description: Вьюсет для работы с чартом "Развитие навыков".
+      description: Вьюсет для работы с чартом "Динамика развития навыков".
       parameters:
         - name: team
           in: query
@@ -632,6 +843,20 @@ definitions:
         title: Percentage
         type: string
         readOnly: true
+  EmployeePositionRating:
+    required:
+      - position
+      - average_rating
+    type: object
+    properties:
+      position:
+        title: Position
+        type: string
+        minLength: 1
+      average_rating:
+        title: Average rating
+        type: string
+        format: decimal
   EmployeePositions:
     type: object
     properties:
@@ -651,6 +876,45 @@ definitions:
       percentage:
         title: Percentage
         type: string
+        readOnly: true
+  EmployeesCountWithSkills:
+    type: object
+    properties:
+      domain:
+        title: Domain
+        type: string
+        readOnly: true
+        minLength: 1
+      skill_id:
+        title: Skill id
+        type: string
+        readOnly: true
+        minLength: 1
+      skill_name:
+        title: Skill name
+        type: string
+        readOnly: true
+        minLength: 1
+      count_employees:
+        title: Count employees
+        type: integer
+        readOnly: true
+  EmployeesWithSkill:
+    type: object
+    properties:
+      domain:
+        title: Domain
+        type: string
+        readOnly: true
+        minLength: 1
+      employee:
+        title: Employee
+        type: string
+        readOnly: true
+        minLength: 1
+      count_employees:
+        title: Count employees
+        type: integer
         readOnly: true
   SkillsDevelopment:
     required:
@@ -683,6 +947,11 @@ definitions:
       - percentage
     type: object
     properties:
+      employee_id:
+        title: Employee id
+        type: string
+        readOnly: true
+        minLength: 1
       employee:
         title: Employee
         type: string

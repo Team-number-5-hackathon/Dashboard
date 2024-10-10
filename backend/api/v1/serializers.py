@@ -111,7 +111,12 @@ class SuitabilityPositionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rating
-        fields = ("employee_id", "employee", "total_yes", "total", "percentage")
+        fields = ("employee_id",
+                  "employee",
+                  "total_yes",
+                  "total",
+                  "percentage"
+                  )
 
 
 class EmployeeSkillAverageRatingSerializer(serializers.ModelSerializer):
@@ -131,7 +136,7 @@ class EmployeeSkillAverageRatingSerializer(serializers.ModelSerializer):
 
 class EmployeesCountWithSkillsSerializer(serializers.ModelSerializer):
     """
-    Сериализатор для чарта "Колличество сотрудников,
+    Сериализатор для чарта "Количество сотрудников,
     владеющих навыком" для ВСЕХ НАВЫКОВ.
     """
 
@@ -164,8 +169,8 @@ class EmployeesCountWithSkillsSerializer(serializers.ModelSerializer):
 
 class EmployeesWithSkillSerializer(serializers.ModelSerializer):
     """
-    Сериализатор для чарта "Колличество сотрудников,
-    владеющих навыком" для для ВЫБРАННОГО НАВЫКА.
+    Сериализатор для чарта "Количество сотрудников,
+    владеющих навыком" для ВЫБРАННОГО НАВЫКА.
     """
 
     domain = serializers.CharField(
@@ -249,13 +254,41 @@ class EmployeeGradesSerializer(serializers.ModelSerializer):
             1,
         )
 
+
+class EmployeeGradesWithPositionsSerializer(serializers.ModelSerializer):
+    """Сериализатор для чарта "Количество сотрудников по грейдам".
+    для ВЫБРАННОГО ГРЕЙДА
+    """
+
+    position = serializers.CharField(
+        source="employee__position__name", read_only=True
+    )
+    position_employee_count = serializers.IntegerField(read_only=True)
+    total_employee_count = serializers.IntegerField(read_only=True)
+    percentage = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Rating
+        fields = (
+            "position",
+            "position_employee_count",
+            "total_employee_count",
+            "percentage",
+        )
+
+    def get_percentage(self, obj):
+        return round(
+            obj["position_employee_count"] * 100 / obj["total_employee_count"],
+            1,
+        )
+
 # --------------------------------------------
 #    Чарт 4 Вкладка 1
 # --------------------------------------------
 
 
 class SkillsDevelopmentSerializer(serializers.ModelSerializer):
-    """Сериализатор для чарта "Развитие навыков"."""
+    """Сериализатор для чарта "Динамика развития навыков"."""
 
     rating_date = serializers.DateField()
     average_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
@@ -273,4 +306,58 @@ class SkillsDevelopmentSerializer(serializers.ModelSerializer):
             "average_rating",
             "average_rating_hard",
             "average_rating_soft",
+        )
+
+# --------------------------------------------
+#    Чарт 4 Вкладка 2
+# --------------------------------------------
+
+
+class PositionRatingSerializer(serializers.ModelSerializer):
+    """Сериализатор для чарта "Оценки сотрудников по должностям"."""
+
+    position = serializers.CharField(source="employee__position__name")
+    position_id = serializers.CharField(source="employee__position__id")
+    average_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
+
+    class Meta:
+        model = Rating
+        fields = (
+            "position",
+            "position_id",
+            "average_rating",
+        )
+
+
+class GradeRatingSerializer(serializers.ModelSerializer):
+    """Сериализатор для чарта "Оценки сотрудников по должностям".
+    для ВЫБРАННОЙ ДОЛЖНОСТИ
+    """
+    grade = serializers.CharField(source="employee__grade")
+    average_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
+
+    class Meta:
+        model = Rating
+        fields = (
+            "grade",
+            "average_rating",
+        )
+
+
+class EmployeeRatingSerializer(serializers.ModelSerializer):
+    """Сериализатор для чарта "Оценки сотрудников по должностям".
+    для ВЫБРАННОЙ ДОЛЖНОСТИ И ГРЕЙДА
+    """
+
+    employee = employee = serializers.CharField(
+        source="full_name",
+        read_only=True,
+    )
+    average_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
+
+    class Meta:
+        model = Rating
+        fields = (
+            "employee",
+            "average_rating",
         )

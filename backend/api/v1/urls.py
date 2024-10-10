@@ -2,10 +2,13 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from api.v1.views import (CompetenceViewSet, DomainViewSet,
+                          EmployeeGradesViewSet,
+                          EmployeeGradesWithPositionsViewSet,
+                          EmployeePositionsViewSet, EmployeeRatingViewSet,
                           EmployeesCountWithSkillsViewSet,
-                          EmployeesWithSkillViewSet,
-                          EmployeeGradesViewSet, EmployeePositionsViewSet,
-                          EmployeeSkillsAverageRatingViewSet, EmployeeViewSet,
+                          EmployeeSkillsAverageRatingViewSet,
+                          EmployeesWithSkillViewSet, EmployeeViewSet,
+                          GradeRatingViewSet, PositionRatingViewSet,
                           PositionViewSet, RatingViewSet,
                           SkillsDevelopmentViewSet, SkillViewSet,
                           SuitabilityPositionViewSet, TeamViewSet)
@@ -64,6 +67,11 @@ router_v1.register(
     EmployeeGradesViewSet,
     basename="employee_grades",
 )
+router_v1.register(
+    r"dashboard/employee_grades/(?P<grade>\w+)/positions",
+    EmployeeGradesWithPositionsViewSet,
+    basename="employee_grades_positions",
+)
 
 # --------------------------------------------
 #    Чарт 4 Вкладка 1
@@ -72,6 +80,25 @@ router_v1.register(
     r"dashboard/skills_development",
     SkillsDevelopmentViewSet,
     basename="skills_development",
+)
+
+# --------------------------------------------
+#    Чарт 4 Вкладка 2
+# --------------------------------------------
+router_v1.register(
+    r"dashboard/position_rating",
+    PositionRatingViewSet,
+    basename="position_rating",
+)
+router_v1.register(
+    r"dashboard/position_rating/(?P<position_id>\d+)/grades",
+    GradeRatingViewSet,
+    basename="grade_rating",
+)
+router_v1.register(
+    r"dashboard/position_rating/(?P<position_id>\d+)/grades/(?P<grade>\w+)",
+    EmployeeRatingViewSet,
+    basename="employee_rating",
 )
 
 urlpatterns = [
